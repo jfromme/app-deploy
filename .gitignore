@@ -8,3 +8,4 @@ terraform/.terraform/*
 *.zip
 terraform/variables.tf
 .vscode/settings.json
+/.idea/

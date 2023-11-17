@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -257,11 +258,14 @@ func getPresignedUrls(apiHost string, packages Packages, sessionToken string) ([
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(b))
+	log.Printf("getPresignedUrls payload: %s", string(b))
 
-	payload := strings.NewReader(string(b))
+	payload := bytes.NewReader(b)
 
-	req, _ := http.NewRequest("POST", url, payload)
+	req, err := http.NewRequest("POST", url, payload)
+	if err != nil {
+		return nil, fmt.Errorf("error creating http request for %s: %w", string(b), err)
+	}
 
 	req.Header.Add("accept", "*/*")
 	req.Header.Add("content-type", "application/json")
@@ -270,9 +274,17 @@ func getPresignedUrls(apiHost string, packages Packages, sessionToken string) ([
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("http status code: %d", res.StatusCode)
 
-	defer res.Body.Close()
-	body, _ := io.ReadAll(res.Body)
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			log.Printf("error closing response body: %v", err)
+		}
+	}()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
 
 	return body, nil
 }

@@ -32,6 +32,7 @@ deploy:
 	cd $(WORKING_DIR)/terraform/application-wrapper/applications ; git clone ${EXTERNAL_REPO} app
 	cd $(WORKING_DIR)/terraform/application-wrapper/applications/app
 	mv $(WORKING_DIR)/terraform/application-wrapper/applications/app/${ENTRYPOINT} $(WORKING_DIR)/terraform/application-wrapper/${ENTRYPOINT}
+	mv $(WORKING_DIR)/terraform/application-wrapper/applications/app/requirements.txt $(WORKING_DIR)/terraform/application-wrapper/requirements.txt
 	mv $(WORKING_DIR)/terraform/application-wrapper/applications/app/Dockerfile $(WORKING_DIR)/terraform/application-wrapper/Dockerfile
 	rm -rf $(WORKING_DIR)/terraform/application-wrapper/applications/app
     ifeq ($(ENTRYPOINT),main.py)
